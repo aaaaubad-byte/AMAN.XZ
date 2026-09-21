@@ -1,76 +1,109 @@
 import React from 'react';
-import { ShieldCheck, Database, Layers, Smartphone, Sparkles } from 'lucide-react';
+import {
+  Smartphone,
+  Shield,
+  Palette,
+  Code2,
+  Database,
+  Layers,
+  Sparkles
+} from 'lucide-react';
+import { AmanLogo } from './AmanLogo';
+
+export type MainTab =
+  | 'customer_app'
+  | 'admin_portal'
+  | 'design_system'
+  | 'android_code'
+  | 'sql_schema';
 
 interface HeaderProps {
-  activeTab: 'sql' | 'architecture' | 'android';
-  setActiveTab: (tab: 'sql' | 'architecture' | 'android') => void;
+  activeTab: MainTab;
+  setActiveTab: (tab: MainTab) => void;
+  pendingRequestsCount: number;
+  openTasksCount: number;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
+export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  setActiveTab,
+  pendingRequestsCount,
+  openTasksCount
+}) => {
+  const tabs = [
+    {
+      id: 'customer_app' as MainTab,
+      label: 'تطبيق العميل (Android)',
+      icon: Smartphone
+    },
+    {
+      id: 'admin_portal' as MainTab,
+      label: 'بوابة الإدارة (Admin)',
+      icon: Shield,
+      badge: pendingRequestsCount + openTasksCount
+    },
+    {
+      id: 'design_system' as MainTab,
+      label: 'الهوية البصرية (Design Tokens)',
+      icon: Palette
+    },
+    {
+      id: 'android_code' as MainTab,
+      label: 'أكواد أندرويد (Kotlin)',
+      icon: Code2
+    },
+    {
+      id: 'sql_schema' as MainTab,
+      label: 'مخطط Supabase SQL',
+      icon: Database
+    }
+  ];
+
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <header className="bg-white border-b border-[#DCE9E6] sticky top-0 z-30 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-3 gap-3">
+          {/* Official Brand Logo */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200">
-              <ShieldCheck className="w-7 h-7" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold tracking-tight text-slate-900">أمان | AMAN</h1>
-                <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                  V2 Master
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium">
-                منظومة حماية أرقام الهواتف — منصة ترحيل قاعدة البيانات ومحرك التطبيق
+            <AmanLogo size="md" />
+            <div className="hidden sm:block border-r border-[#DCE9E6] pr-4 text-right">
+              <span className="text-[11px] font-bold text-[#087F6E] bg-[#E9F8F5] px-2 py-0.5 rounded-full">
+                V2 Production Master
+              </span>
+              <p className="text-[11px] text-[#6E7A77] mt-0.5">
+                تطبيق أندرويد موحد بتجربتين (عميل + إدارة) مع قاعدة بيانات Supabase
               </p>
             </div>
           </div>
 
-          <nav className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab('sql')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'sql'
-                  ? 'bg-emerald-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <Database className="w-4 h-4" />
-              <span>أمر ترحيل SQL</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-900/40 text-emerald-100">
-                Supabase
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('architecture')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'architecture'
-                  ? 'bg-emerald-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              <span>هندسة المنظومة والشجرة</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('android')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'android'
-                  ? 'bg-emerald-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <Smartphone className="w-4 h-4" />
-              <span>جاهزية كود Android</span>
-              <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                <Sparkles className="w-2.5 h-2.5" />
-                بانتظار الهوية
-              </span>
-            </button>
+          {/* Navigation Tabs */}
+          <nav className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 py-2 px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-[#087F6E] text-white shadow-xs'
+                      : 'text-[#183B2D] hover:bg-[#E9F8F5] hover:text-[#087F6E]'
+                  }`}
+                >
+                  <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#087F6E]'}`} />
+                  <span>{tab.label}</span>
+                  {tab.badge !== undefined && tab.badge > 0 && (
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                        isActive ? 'bg-white text-[#087F6E]' : 'bg-[#FEF3C7] text-[#D97706]'
+                      }`}
+                    >
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </nav>
         </div>
       </div>
