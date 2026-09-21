@@ -1,0 +1,6 @@
+{
+  "name": "AMAN | أمان",
+  "description": "منظومة أمان لحماية أرقام الهواتف من السحب وإعادة البيع — نظام متكامل للعميل والمدير",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
